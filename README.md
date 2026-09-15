@@ -19,6 +19,32 @@ video better.
 
 ---
 
+## Long-form narration (human-voiced)
+
+The automated pipeline above makes Shorts. The **case-study explainer** — 8-14 minutes,
+narrated by a human, no b-roll — is a different craft, and it lives in
+[`docs/NARRATION_PLAYBOOK.md`](docs/NARRATION_PLAYBOOK.md): an 11-beat structure with
+word budgets, the sentence-level rules that hold attention, and a topic → script
+worksheet.
+
+```bash
+python scripts/write_script.py --worksheet --minutes 12          # blank beat sheet, no LLM
+python scripts/write_script.py --topic "Why enterprise AI agents fail"
+python scripts/write_script.py --topic "..." --stop-after outline   # edit the story first
+python scripts/write_script.py --check my_script.txt --minutes 12   # QA your own writing
+```
+
+Generation is three passes — research (every number tagged CONFIRMED/UNVERIFIED) →
+beat sheet → narration — because one-shot "write a 10-minute script" calls produce
+shapeless summary. `backend/app/pipeline/narrative.py` then measures the finished words:
+opener strength, number density, sentence length, direct address, pattern interrupts,
+unglossed jargon, and whether the close calls back to the open.
+
+Worked example, beat sheet and fact ledger:
+[`docs/examples/agentic_ai_case_study_script.md`](docs/examples/agentic_ai_case_study_script.md).
+
+---
+
 ## The generation pipeline
 
 Every video runs through a **LangGraph** state machine. Each stage persists its output to the
@@ -218,6 +244,7 @@ backend/app/
   schemas/     Pydantic request/response models
   api/routes/  auth, topics, projects, approval, publish
   pipeline/    LangGraph graph + nodes + prompts + judge + OpenRouter client
+               narrative.py = long-form beat sheet + script validator
   media/       tts/ images/ subtitles/ video/  (pluggable providers)
   services/    trend discovery, YouTube upload, performance feedback loop
   tasks/       Celery tasks
@@ -225,6 +252,7 @@ backend/app/
 frontend/      React + TypeScript + Tailwind dashboard
 scripts/
   run_daily.py       one-shot CI run: discover → generate → upload → ledger
+  write_script.py    long-form narration: research → beat sheet → script → QA
   collect_stats.py   weekly stats collection + markdown report
 state/                     the channel's committed memory (survives ephemeral CI)
   seen.json                news stories already covered

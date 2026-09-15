@@ -16,6 +16,7 @@ secrets/
 
 # Media output & models
 media_output/
+out/
 models/
 *.onnx
 *.wav
