@@ -4,11 +4,18 @@ How to turn a topic into a narrated explainer that people finish — the long-fo
 case-study format, written for a channel where **the voice is the only production
 value**: no animation, no b-roll, no music cues.
 
-> On the reference channel: this playbook is a reconstruction of the *structure* that
-> case-study explainer channels (Think School and the format it shares with Wendover,
-> Polymatter, Johnny Harris) use. It is derived from watching how those videos are
-> built, not from any published formula of theirs. Copy the structure, never the
-> sentences.
+> **Status of the numbers below.** The four attention mechanisms and the sentence-level
+> rules are grounded in research and in craft that holds across the format. The specific
+> beat budgets (49-word cold open, 196-word ground zero) are **designed, not measured** —
+> no channel's transcripts have been analysed to produce them yet.
+>
+> `scripts/analyze_channel.py` exists to fix that: point it at a channel or a folder of
+> transcripts and it reports the real medians — words per minute, sentence length, number
+> density, where the first number lands, where the structural breaks fall as a share of
+> runtime — so these budgets can be replaced with measurements. Until you run it, treat
+> section 2 as a working hypothesis.
+>
+> Copy structure, never sentences.
 
 ---
 
@@ -144,7 +151,33 @@ exactly this reason. Do not delete those columns.
 
 ---
 
-## 7. The tooling
+## 7. Measuring a reference channel
+
+Replace the assumptions in section 2 with data:
+
+```bash
+pip install yt-dlp
+
+# A: pull a channel's most-viewed videos and their auto-captions
+python scripts/analyze_channel.py --channel https://www.youtube.com/@ThinkSchool --top 10
+
+# B: transcripts you already downloaded (.vtt / .srt / .txt)
+python scripts/analyze_channel.py --transcripts ./transcripts --label "think school"
+```
+
+The report gives per-video and median: runtime, words per minute, average sentence
+length, numbers per 100 words, direct-address rate, the timestamp of the first number,
+whether the close calls back — plus a histogram of where structural breaks fall across
+each video, and the pacing shape by tenth. Where the medians disagree with section 2,
+the medians win: edit the `share` values in `BEAT_SHEET`.
+
+Two caveats. Auto-captions carry no reliable punctuation, so sentence-length figures are
+indicative while word counts, density and timings are solid. And YouTube must be
+reachable — sandboxed and CI environments generally block it, so run mode A locally.
+
+---
+
+## 8. The tooling
 
 ```bash
 # blank worksheet for writing by hand — no API key needed
@@ -177,7 +210,7 @@ ledger.
 
 ---
 
-## 8. Pre-record checklist
+## 9. Pre-record checklist
 
 - [ ] First sentence has a number and no greeting
 - [ ] I can state the contradiction in one breath

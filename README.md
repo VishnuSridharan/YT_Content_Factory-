@@ -43,6 +43,17 @@ unglossed jargon, and whether the close calls back to the open.
 Worked example, beat sheet and fact ledger:
 [`docs/examples/agentic_ai_case_study_script.md`](docs/examples/agentic_ai_case_study_script.md).
 
+To derive the format from a reference channel instead of assuming it,
+`scripts/analyze_channel.py` measures real transcripts — medians for pace, sentence
+length and number density, where the first number lands, and where structural breaks
+fall as a share of runtime:
+
+```bash
+pip install yt-dlp
+python scripts/analyze_channel.py --channel https://www.youtube.com/@SomeChannel --top 10
+python scripts/analyze_channel.py --transcripts ./transcripts    # files you already have
+```
+
 ---
 
 ## The generation pipeline
@@ -253,6 +264,7 @@ frontend/      React + TypeScript + Tailwind dashboard
 scripts/
   run_daily.py       one-shot CI run: discover → generate → upload → ledger
   write_script.py    long-form narration: research → beat sheet → script → QA
+  analyze_channel.py measure a reference channel's transcripts against those rules
   collect_stats.py   weekly stats collection + markdown report
 state/                     the channel's committed memory (survives ephemeral CI)
   seen.json                news stories already covered
